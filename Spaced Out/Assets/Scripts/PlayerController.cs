@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     private bool charging = false, increasing = false;
     private float launchForce = 0f;
 
-    public float minLaunchForce = 100f, maxLaunchForce = 200f, timeToMax = 1f;
+    public float minLaunchForce = 100f, maxLaunchForce = 200f, launchSideScale = 10f, timeToMax = 1f;
     public Transform pitchTransform;
     public Text chargeText;
 
@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
         {
             launchForce = 0;
         }
-        chargeText.text = "" +  launchForce;
+        chargeText.text = "" + launchForce;
     }
 
     private void Charge()
@@ -61,14 +61,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Launch()
+    public void LaunchCharge()
     {
-        Launch(pitchTransform.forward);
+        Launch(pitchTransform.forward, launchForce);
     }
 
-    public void Launch(Vector3 direction)
+    public void LaunchScale(Vector3 distance)
+    {
+        Launch(distance, distance.magnitude * launchSideScale);
+    }
+
+    public void Launch(Vector3 direction, float force)
     {
         Rigidbody body = GetComponent<Rigidbody>();
-        body.AddForce(launchForce * direction.normalized);
+        body.AddForce(force * direction.normalized);
     }
 }

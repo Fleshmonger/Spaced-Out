@@ -3,13 +3,20 @@ using System.Collections;
 
 public class InputController : MonoBehaviour
 {
+    private bool primed = false;
     private Camera current;
+    private Plane inputPlane;
 
-    public bool tilt = false;
+    public bool tilt = false, sidescroll = false;
     public float cameraRotateSpeed = 120f;
-    public Camera behind, above;
+    public Camera behind, side;
     public PlayerController player;
     public Transform playerTransform, playerPitchTransform;
+
+    private void Awake()
+    {
+        inputPlane = new Plane(Vector3.right, Vector3.zero);
+    }
 
     private void ResetRotation()
     {
@@ -22,11 +29,6 @@ public class InputController : MonoBehaviour
         return new Vector2(current.pixelWidth / 2f, current.pixelHeight / 2f);
     }
 
-    private void Awake()
-    {
-        current = behind;
-    }
-
     private void Update()
     {
         // Quit
@@ -35,24 +37,62 @@ public class InputController : MonoBehaviour
             Application.Quit();
         }
 
-        // Look
-        if (Input.GetMouseButton(0))
+        if (sidescroll)
         {
-            Vector2 pos = Input.mousePosition;
-            Vector2 offset = pos - ScreenCenter();
-            DirectedRotation(offset, tilt);
-        }
+            current = side;
+            side.enabled = true;
+            behind.enabled = false;
+ 
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = current.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit) && player.gameObject.Equals(hit.collider.gameObject))
+                {
+                    primed = true;
+                    Debug.Log("Primed!");
+                }
+            }
 
-        // Move
-        if (Input.GetMouseButtonDown(1))
-        {
-            player.SetCharging(true);
+            if (Input.GetMouseButtonUp(0) && primed)
+            {
+                Ray ray = current.ScreenPointToRay(Input.mousePosition);
+                float enter;
+                if (inputPlane.Raycast(ray, out enter))
+                {
+                    Debug.Log("Fire!");
+                    Vector3 distance = playerTransform.position - ray.GetPoint(enter);
+                    player.LaunchScale(distance);
+                }
+                primed = false;
+            }
         }
-
-        if (Input.GetMouseButtonUp(1))
+        else
         {
-            player.Launch();
-            player.SetCharging(false);
+            current = behind;
+            behind.enabled = true;
+            side.enabled = false;
+
+            // Look
+            if (Input.GetMouseButton(0))
+            {
+                Vector2 pos = Input.mousePosition;
+                Vector2 offset = pos - ScreenCenter();
+                DirectedRotation(offset, tilt);
+            }
+        
+            // Move
+            if (Input.GetMouseButtonDown(1))
+            {
+                player.SetCharging(true);
+            }
+
+            // Launch
+            if (Input.GetMouseButtonUp(1))
+            {
+                player.LaunchCharge();
+                player.SetCharging(false);
+            }
         }
     }
 
