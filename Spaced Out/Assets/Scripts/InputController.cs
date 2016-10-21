@@ -53,16 +53,27 @@ public class InputController : MonoBehaviour
                 }
             }
 
-            if (Input.GetMouseButtonUp(0) && primed)
+            if (primed)
             {
-                Ray ray = current.ScreenPointToRay(Input.mousePosition);
-                float enter;
-                if (inputPlane.Raycast(ray, out enter))
+                Vector2 center = ScreenCenter(), mouse = Input.mousePosition;
+                Quaternion rotation = new Quaternion();
+                rotation.SetLookRotation(-new Vector3(0f, mouse.y - center.y, center.x - mouse.x));
+                playerPitchTransform.rotation = rotation;
+                playerTransform.rotation = Quaternion.identity;
+                player.GetComponent<Rigidbody>().freezeRotation = true;
+
+                if (Input.GetMouseButtonUp(0))
                 {
-                    Vector3 distance = playerTransform.position - ray.GetPoint(enter);
-                    player.LaunchScale(distance);
+                    Ray ray = current.ScreenPointToRay(Input.mousePosition);
+                    float enter;
+                    if (inputPlane.Raycast(ray, out enter))
+                    {
+                        Vector3 distance = playerTransform.position - ray.GetPoint(enter);
+                        player.LaunchScale(distance);
+                    }
+                    primed = false;
+                    player.GetComponent<Rigidbody>().freezeRotation = false;
                 }
-                primed = false;
             }
         }
         else
