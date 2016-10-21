@@ -3,14 +3,19 @@ using System.Collections;
 
 public class InputController : MonoBehaviour
 {
-    private bool overTheShoulder = true;
     private Camera current;
-    private Vector3[] cameraPositions;
 
     public bool tilt = false;
     public float cameraRotateSpeed = 120f;
     public Camera behind, above;
-    public Transform charTransform, charPitchTransform;
+    public PlayerController player;
+    public Transform playerTransform, playerPitchTransform;
+
+    private void ResetRotation()
+    {
+        playerTransform.rotation = Quaternion.identity;
+        playerPitchTransform.rotation = Quaternion.identity;
+    }
 
     private Vector2 ScreenCenter()
     {
@@ -37,27 +42,25 @@ public class InputController : MonoBehaviour
             Vector2 offset = pos - ScreenCenter();
             DirectedRotation(offset, tilt);
         }
-        /*
+
         // Move
-        if (Input.GetMouseButtonDown(1) && body.velocity.magnitude == 0f)
+        if (Input.GetMouseButtonDown(1))
         {
-            Vector3 direction = pitch.transform.forward;
-            body.velocity = direction.normalized * launchSpeed;
+
         }
-        */
     }
 
     public void DirectedRotation(Vector2 offset, bool tilt)
     {
         if (tilt)
         {
-            charTransform.Rotate(Vector3.up, Time.deltaTime * cameraRotateSpeed * (offset.x / ScreenCenter().magnitude));
-            charPitchTransform.Rotate(Vector3.right, Time.deltaTime * cameraRotateSpeed * (-offset.y / ScreenCenter().magnitude));
+            Vector3 axis = new Vector3(-offset.y, offset.x, 0);
+            playerTransform.Rotate(axis, Time.deltaTime * cameraRotateSpeed * (offset.magnitude / ScreenCenter().magnitude));
         }
         else
         {
-            Vector3 axis = new Vector3(-offset.y, offset.x, 0);
-            charTransform.Rotate(axis, Time.deltaTime * cameraRotateSpeed * (offset.magnitude / ScreenCenter().magnitude));
+            playerTransform.Rotate(Vector3.up, Time.deltaTime * cameraRotateSpeed * (offset.x / ScreenCenter().magnitude));
+            playerPitchTransform.Rotate(Vector3.right, Time.deltaTime * cameraRotateSpeed * (-offset.y / ScreenCenter().magnitude));
         }
     }
 }
