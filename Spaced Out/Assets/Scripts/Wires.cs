@@ -5,6 +5,9 @@ public class Wires : MonoBehaviour
 {
     private void OnTriggerEnter(Collider collider)
     {
-        LevelManager._instance.Restart();
+        if (collider.gameObject.GetComponent<PlayerController>())
+        {
+            LevelManager._instance.Restart();
+        }
     }
 }
