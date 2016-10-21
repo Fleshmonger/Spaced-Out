@@ -65,7 +65,8 @@ public class InputController : MonoBehaviour
         }
         else
         {
-            playerTransform.Rotate(Vector3.up, Time.deltaTime * cameraRotateSpeed * (offset.x / ScreenCenter().magnitude));
+            float xScale = playerPitchTransform.up.y;
+            playerTransform.Rotate(Vector3.up, Time.deltaTime * xScale * cameraRotateSpeed * (offset.x / ScreenCenter().magnitude));
             playerPitchTransform.Rotate(Vector3.right, Time.deltaTime * cameraRotateSpeed * (-offset.y / ScreenCenter().magnitude));
         }
     }
