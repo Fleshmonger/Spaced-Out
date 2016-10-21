@@ -46,7 +46,13 @@ public class InputController : MonoBehaviour
         // Move
         if (Input.GetMouseButtonDown(1))
         {
+            player.SetCharging(true);
+        }
 
+        if (Input.GetMouseButtonUp(1))
+        {
+            player.Launch();
+            player.SetCharging(false);
         }
     }
 
