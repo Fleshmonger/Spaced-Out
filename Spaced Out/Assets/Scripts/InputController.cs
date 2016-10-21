@@ -50,7 +50,6 @@ public class InputController : MonoBehaviour
                 if (Physics.Raycast(ray, out hit) && player.gameObject.Equals(hit.collider.gameObject))
                 {
                     primed = true;
-                    Debug.Log("Primed!");
                 }
             }
 
@@ -60,7 +59,6 @@ public class InputController : MonoBehaviour
                 float enter;
                 if (inputPlane.Raycast(ray, out enter))
                 {
-                    Debug.Log("Fire!");
                     Vector3 distance = playerTransform.position - ray.GetPoint(enter);
                     player.LaunchScale(distance);
                 }
