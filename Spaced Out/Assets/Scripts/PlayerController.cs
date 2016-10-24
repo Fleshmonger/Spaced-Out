@@ -63,7 +63,12 @@ public class PlayerController : MonoBehaviour
 
     public void LaunchCharge()
     {
-        Launch(pitchTransform.forward, launchForce);
+        LaunchCharge(pitchTransform.forward);
+    }
+
+    public void LaunchCharge(Vector3 direction)
+    {
+        Launch(direction, launchForce);
     }
 
     public void LaunchScale(Vector3 distance)

@@ -10,6 +10,7 @@ public class InputController : MonoBehaviour
     public bool tilt = false, sidescroll = false;
     public float cameraRotateSpeed = 120f;
     public Camera behind, side;
+    public BehindCamera behindCamera;
     public PlayerController player;
     public Transform playerTransform, playerPitchTransform;
 
@@ -99,7 +100,7 @@ public class InputController : MonoBehaviour
             // Launch
             if (Input.GetMouseButtonUp(1))
             {
-                player.LaunchCharge();
+                player.LaunchCharge(behindCamera.pitch.transform.forward);
                 player.SetCharging(false);
             }
         }
@@ -107,6 +108,7 @@ public class InputController : MonoBehaviour
 
     public void DirectedRotation(Vector2 offset, bool tilt)
     {
+        /*
         if (tilt)
         {
             Vector3 axis = new Vector3(-offset.y, offset.x, 0);
@@ -117,6 +119,18 @@ public class InputController : MonoBehaviour
             float xScale = playerPitchTransform.up.y;
             playerTransform.Rotate(Vector3.up, Time.deltaTime * xScale * cameraRotateSpeed * (offset.x / ScreenCenter().magnitude));
             playerPitchTransform.Rotate(Vector3.right, Time.deltaTime * cameraRotateSpeed * (-offset.y / ScreenCenter().magnitude));
+        }
+        */
+        if (tilt)
+        {
+            Vector3 axis = new Vector3(-offset.y, offset.x, 0);
+            behindCamera.transform.Rotate(axis, Time.deltaTime * cameraRotateSpeed * (offset.magnitude / ScreenCenter().magnitude));
+        }
+        else
+        {
+            float xScale = playerPitchTransform.up.y;
+            behindCamera.transform.Rotate(Vector3.up, Time.deltaTime * xScale * cameraRotateSpeed * (offset.x / ScreenCenter().magnitude));
+            behindCamera.pitch.transform.Rotate(Vector3.right, Time.deltaTime * cameraRotateSpeed * (-offset.y / ScreenCenter().magnitude));
         }
     }
 }
