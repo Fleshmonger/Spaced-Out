@@ -90,7 +90,14 @@ public class InputController : MonoBehaviour
                 Vector2 offset = pos - ScreenCenter();
                 DirectedRotation(offset, tilt);
             }
-        
+
+            if (Input.GetMouseButton(1))
+            {
+                player.GetComponent<Rigidbody>().freezeRotation = true;
+                playerTransform.rotation = behindCamera.transform.rotation;
+                playerPitchTransform.rotation = behindCamera.pitch.transform.rotation;
+            }
+
             // Move
             if (Input.GetMouseButtonDown(1))
             {
@@ -100,6 +107,7 @@ public class InputController : MonoBehaviour
             // Launch
             if (Input.GetMouseButtonUp(1))
             {
+                player.GetComponent<Rigidbody>().freezeRotation = false;
                 player.LaunchCharge(behindCamera.pitch.transform.forward);
                 player.SetCharging(false);
             }
@@ -128,7 +136,7 @@ public class InputController : MonoBehaviour
         }
         else
         {
-            float xScale = playerPitchTransform.up.y;
+            float xScale = behindCamera.pitch.transform.up.y;
             behindCamera.transform.Rotate(Vector3.up, Time.deltaTime * xScale * cameraRotateSpeed * (offset.x / ScreenCenter().magnitude));
             behindCamera.pitch.transform.Rotate(Vector3.right, Time.deltaTime * cameraRotateSpeed * (-offset.y / ScreenCenter().magnitude));
         }
