@@ -4,11 +4,12 @@ using System.Collections;
 public class InputController : MonoBehaviour
 {
     private bool primed = false;
+    private Vector2 oldPoint;
     private Camera current;
     private Plane inputPlane;
 
-    public bool tilt = false, sidescroll = false;
-    public float cameraRotateSpeed = 120f;
+    public bool tilt = false, sidescroll = false, swipeRotate = true;
+    public float cameraRotateSpeed = 4000f;
     public Camera behind, side;
     public BehindCamera behindCamera;
     public PlayerController player;
@@ -83,12 +84,26 @@ public class InputController : MonoBehaviour
             behind.enabled = true;
             side.enabled = false;
 
+            if (Input.GetMouseButtonDown(0))
+            {
+                oldPoint = Input.mousePosition;
+            }
+
             // Look
             if (Input.GetMouseButton(0))
             {
                 Vector2 pos = Input.mousePosition;
-                Vector2 offset = pos - ScreenCenter();
+                Vector2 offset;
+                if (swipeRotate)
+                {
+                    offset = pos - oldPoint;
+                }
+                else
+                {
+                    offset = pos - ScreenCenter();
+                }
                 DirectedRotation(offset, tilt);
+                oldPoint = pos;
             }
 
             if (Input.GetMouseButton(1))
